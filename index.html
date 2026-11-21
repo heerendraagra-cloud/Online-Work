@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="hi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickType Digital Services - Fast & Accurate Online Typing</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Noto Sans Devanagari -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Devanagari', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+        }
+        .hero-pattern {
+            background-color: #1e1b4b;
+            background-image: radial-gradient(#4338ca 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-indigo-600 selection:text-white">
+
+    <!-- Toast Notification Banner (Replaces alert) -->
+    <div id="toast-msg" class="fixed bottom-5 right-5 z-50 hidden transform transition-all duration-300 translate-y-4 opacity-0">
+        <div class="bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-3 text-sm font-medium">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+            <span id="toast-text">Details saved successfully!</span>
+        </div>
+    </div>
+
+    <!-- Top Owner Customization Bar -->
+    <div id="owner-panel" class="hidden bg-slate-900 text-white border-b border-slate-800 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400">
+                        <i class="fa-solid fa-sliders"></i> Customize Your Details (Owner Panel)
+                    </span>
+                    <p class="text-xs text-slate-400 mt-1">Apna Business Name aur WhatsApp Number yahan save karein. Saare WhatsApp order links automatically update ho jayenge.</p>
+                </div>
+                <div class="flex flex-wrap items-end gap-3">
+                    <div class="flex-1 min-w-[180px]">
+                        <label for="edit-biz-name" class="block text-[11px] font-medium text-slate-300 mb-1">Business Name</label>
+                        <input type="text" id="edit-biz-name" placeholder="QuickType Digital Services" 
+                            class="w-full px-3.5 py-2 text-sm rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div class="flex-1 min-w-[180px]">
+                        <label for="edit-wa-number" class="block text-[11px] font-medium text-slate-300 mb-1">WhatsApp Number (with 91)</label>
+                        <input type="tel" id="edit-wa-number" placeholder="919876543210" 
+                            class="w-full px-3.5 py-2 text-sm rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="saveOwnerSettings()" 
+                            class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-xl shadow transition cursor-pointer">
+                            <i class="fa-solid fa-check mr-1"></i> Save
+                        </button>
+                        <button onclick="toggleOwnerPanel()" 
+                            class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition cursor-pointer">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Navigation Header -->
+    <header class="sticky top-0 z-40 glass-nav border-b border-slate-200/80">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center text-white shadow-md shadow-indigo-200 group-hover:scale-105 transition">
+                    <i class="fa-solid fa-keyboard text-lg"></i>
+                </div>
+                <div>
+                    <span id="nav-biz-name" class="font-bold text-base sm:text-lg text-slate-900 tracking-tight block leading-tight">QuickType Digital Services</span>
+                    <span class="text-[11px] font-medium text-emerald-600 block">Online Typing & Document Hub</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-slate-600">
+                <a href="#services" class="hover:text-indigo-600 transition">Services & Rates</a>
+                <a href="#calculator" class="hover:text-indigo-600 transition">Instant Quote</a>
+                <a href="#how-it-works" class="hover:text-indigo-600 transition">How It Works</a>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2">
+                <button onclick="toggleOwnerPanel()" title="Customize Business Name & WhatsApp Number"
+                    class="px-3 py-2 text-xs font-semibold text-slate-700 hover:text-indigo-600 bg-slate-100 hover:bg-indigo-50 border border-slate-200/80 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-gear"></i>
+                    <span class="hidden sm:inline">Customize Your Details</span>
+                </button>
+                <a href="#calculator" 
+                    class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>Order Now</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-pattern text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-950/95 via-indigo-900/90 to-slate-900/95"></div>
+        
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                <!-- Left Text -->
+                <div class="lg:col-span-7 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-800/70 border border-indigo-500/40 text-indigo-200 text-xs sm:text-sm font-medium mb-5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="hero-badge-name">QuickType Digital Services</span> • 100% Online
+                    </div>
+                    
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5">
+                        Ghar Baithe <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">Fast & Error-Free</span> Typing & Document Services
+                    </h1>
+                    
+                    <p class="text-base sm:text-lg text-indigo-100/90 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+                        Professional Resume/CV, Marriage Biodata, Hindi-English Typing, Student Notes PDF, aur Formal Applications ab bina cyber cafe gaye banwayein. WhatsApp par details bhejein aur turant file payein!
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <a id="hero-wa-btn" href="https://wa.me/919876543210?text=Namaste!%20Mujhe%20typing%20service%20ke%20baare%20mein%20order%20dena%20hai." target="_blank" rel="noopener"
+                            class="w-full sm:w-auto px-7 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-base rounded-2xl shadow-lg shadow-emerald-950/40 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2.5">
+                            <i class="fa-brands fa-whatsapp text-xl"></i>
+                            <span>Order on WhatsApp</span>
+                        </a>
+                        <a href="#services" 
+                            class="w-full sm:w-auto px-7 py-4 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-base rounded-2xl transition flex items-center justify-center gap-2">
+                            <span>View Rate Card</span>
+                            <i class="fa-solid fa-arrow-down text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Summary Card -->
+                <div class="lg:col-span-5">
+                    <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl">
+                        <div class="flex items-center justify-between pb-4 mb-5 border-b border-white/10">
+                            <span class="text-sm font-semibold text-emerald-300">Starting Rates</span>
+                            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-bold rounded-full">Sirf ₹15/page se shuru</span>
+                        </div>
+                        <ul class="space-y-4 text-sm sm:text-base text-indigo-50">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                                <span><strong>Preview Before Payment:</strong> Pehle apni file ka screenshot dekhein, santusht hone par UPI karein.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                                <span><strong>Hindi & English Support:</strong> Kruti Dev, Mangal Unicode aur English dono mein saaf typing.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                                <span><strong>PDF + Editable File:</strong> Aapko print-ready PDF ke saath Word/Excel file bhi milegi.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                                <span><strong>Zero Travel Cost:</strong> Mobile se photo bhejein aur ghar baithe kaam karwayein.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust & Features Strip -->
+    <section class="bg-white border-b border-slate-200/80 py-7">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-bolt text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm">Fast Delivery</h3>
+                        <p class="text-xs text-slate-500">Same-day quick file delivery</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-shield-halved text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm">100% Privacy</h3>
+                        <p class="text-xs text-slate-500">Aapke documents bilkul safe</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-language text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm">Hindi & English Support</h3>
+                        <p class="text-xs text-slate-500">Dono bhashaon mein expert typing</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div class="w-11 h-11 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-pen-ruler text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm">Unlimited Minor Edits</h3>
+                        <p class="text-xs text-slate-500">Chote-mote sudhar bilkul free</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services & Transparent Rate Card Section -->
+    <section id="services" class="py-16 md:py-20 max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3.5 py-1.5 rounded-full">Transparent Rate Card</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-3 mb-3">Our Services & Fixed Rates</h2>
+            <p class="text-slate-600 text-sm sm:text-base">Koi hidden charge nahi. Apni zaroorat ki service chunein aur direct price calculate karke order karein.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card 1: Professional Resume/CV -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-id-card-clip"></i>
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 font-extrabold text-sm">₹99 <span class="text-xs font-normal text-emerald-600">/ copy</span></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Professional Resume / CV</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">Freshers aur experienced candidates ke liye modern, ATS-friendly Resume design aur formatting (PDF + Word file).</p>
+                </div>
+                <button onclick="selectService('resume')" 
+                    class="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-indigo-600 text-slate-800 hover:text-white font-semibold text-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>Select Service</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Card 2: Marriage Biodata -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-heart-circle-check"></i>
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 font-extrabold text-sm">₹79 <span class="text-xs font-normal text-emerald-600">/ copy</span></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Marriage Biodata</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">Shaadi ke liye attractive traditional ya modern border design ke saath Hindi/English Marriage Biodata (Photo ke saath).</p>
+                </div>
+                <button onclick="selectService('biodata')" 
+                    class="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-indigo-600 text-slate-800 hover:text-white font-semibold text-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>Select Service</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Card 3: Hindi / English Typing -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-keyboard"></i>
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 font-extrabold text-sm">₹15 <span class="text-xs font-normal text-emerald-600">/ page</span></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Hindi / English Typing</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">Kisi bhi book, story, affidavit matter, ya document ki photo bhejein aur error-free Hindi/English typing karwayein.</p>
+                </div>
+                <button onclick="selectService('typing')" 
+                    class="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-indigo-600 text-slate-800 hover:text-white font-semibold text-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>Select Service</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Card 4: Student Assignments / Notes -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-book-open-reader"></i>
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 font-extrabold text-sm">₹20 <span class="text-xs font-normal text-emerald-600">/ page</span></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Student Assignments / Notes</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">Handwritten class notes, project files aur school/college assignments ko saaf headings aur tables ke saath PDF banwayein.</p>
+                </div>
+                <button onclick="selectService('notes')" 
+                    class="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-indigo-600 text-slate-800 hover:text-white font-semibold text-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>Select Service</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Card 5: PDF to Word / Excel -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-file-export"></i>
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 font-extrabold text-sm">₹15 <span class="text-xs font-normal text-emerald-600">/ page</span></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">PDF to Word / Excel</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">Scanned PDFs, images ya purani lists ko 100% editable MS Word document ya Excel spreadsheet mein convert karwayein.</p>
+                </div>
+                <button onclick="selectService('conversion')" 
+                    class="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-indigo-600 text-slate-800 hover:text-white font-semibold text-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>Select Service</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Card 6: Formal Letters / Applications -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 transition flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                        </div>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 font-extrabold text-sm">₹49 <span class="text-xs font-normal text-emerald-600">/ copy</span></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Formal Letters / Applications</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">Bank, school, office, leave application, rent agreement draft ya official letters sahi format mein likhwayein aur type karwayein.</p>
+                </div>
+                <button onclick="selectService('letters')" 
+                    class="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-indigo-600 text-slate-800 hover:text-white font-semibold text-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                    <span>Select Service</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Instant Quote & WhatsApp Order Form -->
+    <section id="calculator" class="py-16 md:py-20 bg-slate-100/80 border-y border-slate-200/80">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-xl mx-auto mb-10">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3.5 py-1.5 rounded-full">Instant Quote & Order</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-3 mb-2">Apna Estimate Dekhein aur Order Karein</h2>
+                <p class="text-slate-600 text-sm sm:text-base">Service aur pages select karein, turant total charge dekhein aur seedha WhatsApp par order bhejein.</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/90 overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12">
+                    <!-- Left Form Inputs -->
+                    <div class="lg:col-span-7 p-6 sm:p-8 space-y-5">
+                        <div>
+                            <label for="order-service" class="block text-sm font-bold text-slate-800 mb-2">1. Service Chunein (Select Service)</label>
+                            <select id="order-service" onchange="calculateOrder()"
+                                class="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="resume" data-name="Professional Resume / CV" data-price="99" data-unit="copy">Professional Resume / CV — ₹99 / copy</option>
+                                <option value="biodata" data-name="Marriage Biodata" data-price="79" data-unit="copy">Marriage Biodata — ₹79 / copy</option>
+                                <option value="typing" data-name="Hindi / English Typing" data-price="15" data-unit="page">Hindi / English Typing — ₹15 / page</option>
+                                <option value="notes" data-name="Student Assignments / Notes" data-price="20" data-unit="page">Student Assignments / Notes — ₹20 / page</option>
+                                <option value="conversion" data-name="PDF to Word / Excel" data-price="15" data-unit="page">PDF to Word / Excel — ₹15 / page</option>
+                                <option value="letters" data-name="Formal Letters / Applications" data-price="49" data-unit="copy">Formal Letters / Applications — ₹49 / copy</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="order-qty" class="block text-sm font-bold text-slate-800 mb-2">
+                                    2. Kitne <span id="unit-label">Copies</span>?
+                                </label>
+                                <div class="flex items-center">
+                                    <button type="button" onclick="adjustQty(-1)" 
+                                        class="w-11 h-11 rounded-l-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 font-bold text-lg flex items-center justify-center cursor-pointer">
+                                        -
+                                    </button>
+                                    <input type="number" id="order-qty" value="1" min="1" max="500" oninput="calculateOrder()"
+                                        class="w-full h-11 text-center bg-white border-y border-slate-300 text-slate-900 font-bold text-base focus:outline-none">
+                                    <button type="button" onclick="adjustQty(1)" 
+                                        class="w-11 h-11 rounded-r-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 font-bold text-lg flex items-center justify-center cursor-pointer">
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="order-lang" class="block text-sm font-bold text-slate-800 mb-2">3. Language (Bhasha)</label>
+                                <select id="order-lang" onchange="calculateOrder()"
+                                    class="w-full h-11 px-3.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="English">English</option>
+                                    <option value="Hindi">Hindi (हिंदी)</option>
+                                    <option value="Hindi + English Mix">Hindi + English Mix</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="order-notes" class="block text-sm font-bold text-slate-800 mb-2">4. Brief Instructions (Optional)</label>
+                            <textarea id="order-notes" rows="2" placeholder="Jaise: Mujhe aaj sham tak chahiye, ya photo WhatsApp par bhej raha hoon..."
+                                class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Right Live Summary Box -->
+                    <div class="lg:col-span-5 bg-indigo-950 text-white p-6 sm:p-8 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-300">Live Order Summary</span>
+                            <h3 id="summary-service-name" class="text-xl font-bold text-white mt-2">Professional Resume / CV</h3>
+                            
+                            <div class="mt-6 space-y-3 border-y border-indigo-800/80 py-4 text-sm">
+                                <div class="flex justify-between text-indigo-200">
+                                    <span>Rate:</span>
+                                    <span id="summary-rate" class="font-semibold text-white">₹99 / copy</span>
+                                </div>
+                                <div class="flex justify-between text-indigo-200">
+                                    <span>Quantity:</span>
+                                    <span id="summary-qty" class="font-semibold text-white">1 copy</span>
+                                </div>
+                                <div class="flex justify-between text-indigo-200">
+                                    <span>Language:</span>
+                                    <span id="summary-lang" class="font-semibold text-white">English</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 flex items-baseline justify-between">
+                                <span class="text-sm font-medium text-indigo-200">Estimated Total:</span>
+                                <span id="summary-total" class="text-3xl sm:text-4xl font-extrabold text-emerald-400">₹99</span>
+                            </div>
+                            <p class="text-[11px] text-indigo-300 mt-1">*Payment kaam ka preview dekhne ke baad UPI se karein.</p>
+                        </div>
+
+                        <div class="mt-7">
+                            <button type="button" onclick="sendWhatsAppOrder()"
+                                class="w-full py-4 px-5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-base rounded-2xl shadow-lg shadow-emerald-950/50 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2.5 cursor-pointer">
+                                <i class="fa-brands fa-whatsapp text-xl"></i>
+                                <span>Send Order on WhatsApp</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3-Step "How It Works" Section -->
+    <section id="how-it-works" class="py-16 md:py-20 max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="text-center max-w-2xl mx-auto mb-14">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-3.5 py-1.5 rounded-full">Simple 3-Step Process</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-3 mb-3">How It Works (Kaise Kaam Hota Hai)</h2>
+            <p class="text-slate-600 text-sm sm:text-base">Bina kisi jhanjhat ke sirf 3 aasan steps mein apni file payein.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Step 1 -->
+            <div class="bg-white rounded-3xl p-7 border border-slate-200/90 shadow-sm text-center relative">
+                <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-5 shadow-md shadow-indigo-200">
+                    1
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Send Photo/Details on WhatsApp</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">Apne notes ki clear photo, purana resume, ya details seedha hamare WhatsApp par bhejein.</p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white rounded-3xl p-7 border border-slate-200/90 shadow-sm text-center relative">
+                <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-5 shadow-md shadow-indigo-200">
+                    2
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Preview & UPI Payment</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">Typing poori hone par hum aapko file ka preview dikhayenge. Check karne ke baad GPay/PhonePe/Paytm se payment karein.</p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-white rounded-3xl p-7 border border-slate-200/90 shadow-sm text-center relative">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-600 text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-5 shadow-md shadow-emerald-200">
+                    3
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Get Instant PDF/Word File</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">Payment hote hi turant aapke WhatsApp aur Email par final high-quality PDF aur editable Word/Excel file bhej di jayegi.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start gap-2.5 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+                        <i class="fa-solid fa-keyboard text-sm"></i>
+                    </div>
+                    <span id="footer-biz-name" class="font-bold text-lg text-white">QuickType Digital Services</span>
+                </div>
+                <p class="text-xs text-slate-400">Fast, Accurate & Affordable Online Typing, Resume & Documentation Services.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-4">
+                <a id="footer-wa-btn" href="https://wa.me/919876543210?text=Namaste!%20Mujhe%20typing%20service%20chahiye." target="_blank" rel="noopener"
+                    class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-xl transition flex items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>Chat on WhatsApp</span>
+                </a>
+                <button onclick="toggleOwnerPanel(); window.scrollTo({top: 0, behavior: 'smooth'});"
+                    class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-xl transition cursor-pointer">
+                    <i class="fa-solid fa-gear mr-1"></i> Edit Owner Details
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for LocalStorage Owner Settings, Calculator & WhatsApp Integration -->
+    <script>
+        // Default Business Configuration
+        const DEFAULT_BIZ_NAME = "QuickType Digital Services";
+        const DEFAULT_WA_NUMBER = "919876543210";
+
+        let currentBizName = DEFAULT_BIZ_NAME;
+        let currentWaNumber = DEFAULT_WA_NUMBER;
+
+        // Show subtle toast notification instead of alert()
+        function showToast(message) {
+            const toast = document.getElementById('toast-msg');
+            const toastText = document.getElementById('toast-text');
+            toastText.textContent = message;
+            toast.classList.remove('hidden');
+            
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 300);
+            }, 3000);
+        }
+
+        // Toggle Owner Customization Bar
+        function toggleOwnerPanel() {
+            const panel = document.getElementById('owner-panel');
+            panel.classList.toggle('hidden');
+        }
+
+        // Load saved details from localStorage on startup
+        function loadOwnerSettings() {
+            try {
+                const savedName = localStorage.getItem('qt_biz_name');
+                const savedWa = localStorage.getItem('qt_wa_number');
+
+                if (savedName && savedName.trim() !== "") {
+                    currentBizName = savedName.trim();
+                }
+                if (savedWa && savedWa.trim() !== "") {
+                    currentWaNumber = savedWa.replace(/\D/g, '');
+                }
+            } catch (e) {
+                console.warn("LocalStorage access restricted, using defaults.");
+            }
+
+            // Populate inputs & UI
+            document.getElementById('edit-biz-name').value = currentBizName;
+            document.getElementById('edit-wa-number').value = currentWaNumber;
+            applyBrandDetailsToUI();
+        }
+
+        // Save updated details to localStorage and refresh links
+        function saveOwnerSettings() {
+            const nameInput = document.getElementById('edit-biz-name').value.trim();
+            const waInput = document.getElementById('edit-wa-number').value.replace(/\D/g, '');
+
+            if (!nameInput) {
+                showToast("Kripya apna Business Name dalein.");
+                return;
+            }
+            if (!waInput || waInput.length < 10) {
+                showToast("Kripya sahi 10 ya 12 digit WhatsApp number dalein (e.g. 919876543210).");
+                return;
+            }
+
+            // Auto-prepend 91 if user enters 10-digit Indian mobile number
+            const formattedWa = waInput.length === 10 ? "91" + waInput : waInput;
+
+            currentBizName = nameInput;
+            currentWaNumber = formattedWa;
+            document.getElementById('edit-wa-number').value = formattedWa;
+
+            try {
+                localStorage.setItem('qt_biz_name', currentBizName);
+                localStorage.setItem('qt_wa_number', currentWaNumber);
+            } catch (e) {
+                console.warn("Could not save to localStorage.");
+            }
+
+            applyBrandDetailsToUI();
+            toggleOwnerPanel();
+            showToast("Business Name aur WhatsApp Number update ho gaya!");
+        }
+
+        // Update all text elements and static WhatsApp links across the page
+        function applyBrandDetailsToUI() {
+            document.title = `${currentBizName} - Online Typing & Digital Services`;
+            document.getElementById('nav-biz-name').textContent = currentBizName;
+            document.getElementById('hero-badge-name').textContent = currentBizName;
+            document.getElementById('footer-biz-name').textContent = currentBizName;
+
+            const defaultMsg = encodeURIComponent(`Namaste ${currentBizName}! Mujhe online typing/document service ke baare mein jaankari chahiye.`);
+            const waUrl = `https://wa.me/${currentWaNumber}?text=${defaultMsg}`;
+
+            document.getElementById('hero-wa-btn').href = waUrl;
+            document.getElementById('footer-wa-btn').href = waUrl;
+        }
+
+        // Select a service from the Rate Card and scroll smoothly to the Calculator
+        function selectService(serviceKey) {
+            const selectEl = document.getElementById('order-service');
+            selectEl.value = serviceKey;
+            document.getElementById('order-qty').value = 1;
+            calculateOrder();
+
+            const calcSection = document.getElementById('calculator');
+            calcSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Increment/Decrement Quantity safely
+        function adjustQty(delta) {
+            const qtyInput = document.getElementById('order-qty');
+            let current = parseInt(qtyInput.value, 10) || 1;
+            current = Math.max(1, Math.min(500, current + delta));
+            qtyInput.value = current;
+            calculateOrder();
+        }
+
+        // Live Quote Calculation
+        function calculateOrder() {
+            const selectEl = document.getElementById('order-service');
+            const selectedOption = selectEl.options[selectEl.selectedIndex];
+
+            const serviceName = selectedOption.getAttribute('data-name');
+            const unitPrice = parseInt(selectedOption.getAttribute('data-price'), 10);
+            const unitType = selectedOption.getAttribute('data-unit');
+
+            const qtyInput = document.getElementById('order-qty');
+            let qty = parseInt(qtyInput.value, 10);
+            if (isNaN(qty) || qty < 1) {
+                qty = 1;
+            }
+
+            const lang = document.getElementById('order-lang').value;
+            const total = unitPrice * qty;
+            const unitPlural = qty > 1 ? (unitType === 'copy' ? 'copies' : 'pages') : unitType;
+
+            // Update UI labels
+            document.getElementById('unit-label').textContent = unitType === 'copy' ? 'Copies' : 'Pages';
+            document.getElementById('summary-service-name').textContent = serviceName;
+            document.getElementById('summary-rate').textContent = `₹${unitPrice} / ${unitType}`;
+            document.getElementById('summary-qty').textContent = `${qty} ${unitPlural}`;
+            document.getElementById('summary-lang').textContent = lang;
+            document.getElementById('summary-total').textContent = `₹${total}`;
+        }
+
+        // Build Pre-Filled WhatsApp Order Message and Open WhatsApp
+        function sendWhatsAppOrder() {
+            const selectEl = document.getElementById('order-service');
+            const selectedOption = selectEl.options[selectEl.selectedIndex];
+
+            const serviceName = selectedOption.getAttribute('data-name');
+            const unitPrice = parseInt(selectedOption.getAttribute('data-price'), 10);
+            const unitType = selectedOption.getAttribute('data-unit');
+            const qty = Math.max(1, parseInt(document.getElementById('order-qty').value, 10) || 1);
+            const lang = document.getElementById('order-lang').value;
+            const notes = document.getElementById('order-notes').value.trim();
+            const total = unitPrice * qty;
+            const unitPlural = qty > 1 ? (unitType === 'copy' ? 'copies' : 'pages') : unitType;
+
+            let message = `Namaste *${currentBizName}*! Mujhe ek naya order dena hai:\n\n`;
+            message += `📌 *Service:* ${serviceName}\n`;
+            message += `📄 *Quantity:* ${qty} ${unitPlural}\n`;
+            message += `🌐 *Language:* ${lang}\n`;
+            message += `💰 *Estimated Price:* ₹${total}\n`;
+            if (notes) {
+                message += `📝 *Note:* ${notes}\n`;
+            }
+            message += `\nMain apni details/photos yahan bhej raha hoon.`;
+
+            const encodedMsg = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${currentWaNumber}?text=${encodedMsg}`;
+
+            window.open(whatsappUrl, '_blank', 'noopener');
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadOwnerSettings();
+            calculateOrder();
+        });
+    </script>
+</body>
+</html>
